@@ -5,12 +5,14 @@ class FoodCard extends StatelessWidget {
   final String rating;
   final String cookTime;
   final String thumbnailUrl;
+
   FoodCard({
     required this.title,
     required this.cookTime,
     required this.rating,
     required this.thumbnailUrl,
   });
+
   @override
   Widget build(BuildContext context) {
     return Container(
