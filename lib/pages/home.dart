@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:foodlistapp/pages/widgets/food_card.dart';
+import 'package:foodlistapp/pages/widgets/FoodCard.dart';
+import 'package:foodlistapp/models/Food.dart';
+import 'package:foodlistapp/api/FoodApi.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -7,6 +9,22 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late List<Food> _foods;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    getFoods();
+  }
+
+  Future<void> getFoods() async {
+    _foods = await FoodApi.getFood();
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,12 +38,17 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
-        body: FoodCard(
-          title: 'Pisang Coklat',
-          cookTime: '20',
-          rating: '3',
-          thumbnailUrl:
-              'https://lh3.googleusercontent.com/ei5eF1LRFkkcekhjdR_8XgOqgdjpomf-rda_vvh7jIauCgLlEWORINSKMRR6I6iTcxxZL9riJwFqKMvK0ixS0xwnRHGMY4I5Zw=s360',
-        ));
+        body: _isLoading
+            ? Center(child: CircularProgressIndicator())
+            : ListView.builder(
+                itemCount: _foods.length,
+                itemBuilder: (context, index) {
+                  return FoodCard(
+                      title: _foods[index].name,
+                      cookTime: _foods[index].totalTime,
+                      rating: _foods[index].rating.toString(),
+                      thumbnailUrl: _foods[index].image);
+                },
+              ));
   }
 }
